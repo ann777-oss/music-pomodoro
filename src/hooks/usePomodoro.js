@@ -76,7 +76,7 @@ export function usePomodoro() {
   useEffect(() => {
     if (session.state !== 'choosing') return
     setChooseLeft(CHOOSE_SEC)
-    const t = setInterval(() => setChooseLeft(s => s - 1), 1000 / speedRef.current)
+    const t = setInterval(() => setChooseLeft(s => Math.max(0, s - 1)), 1000 / speedRef.current)
     return () => clearInterval(t)
   }, [session.state, speed])
 
