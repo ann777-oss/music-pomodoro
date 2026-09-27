@@ -1,0 +1,116 @@
+/* 音乐番茄钟 · 组件样式（design.md C1-C7）
+   全部取值来自 tokens.css；零阴影零渐变；方角 SegmentedBar。 */
+
+/* ———— C1 DotClock 点阵时钟 ———— */
+.dc-clock {
+  display: flex; justify-content: center; align-items: center; gap: .08em;
+  font-family: var(--f-display);
+  font-variation-settings: 'ROND' 100;
+  font-weight: 400;                     /* 规范：Doto ≤500，点才圆而分离 */
+  line-height: 1;
+  color: var(--display);
+  font-variant-numeric: tabular-nums;
+}
+.dc-clock.dc-lg { font-size: clamp(120px, 19vw, 168px); }
+.dc-clock.dc-md { font-size: clamp(72px, 12vw, 96px); }
+.dc-colon { display: flex; flex-direction: column; gap: .11em; padding: 0 .04em; }
+.dc-colon i { width: .068em; height: .068em; border-radius: 50%; background: var(--display); }
+
+/* ———— C2 SegmentedBar 频谱时间轴 ———— */
+.sb-bar { display: flex; gap: 10px; }
+.sb-group { display: flex; gap: 2px; }
+.sb-g1 { flex: 5; } .sb-g2 { flex: 10; } .sb-g3 { flex: 30; }
+.sb-cell { flex: 1; height: 36px; background: var(--line); transition: background .4s var(--ease); }
+.sb-cell.on { background: var(--display); }
+.sb-cell.cur { background: var(--display); animation: sb-pulse 2s var(--ease) infinite; }
+.sb-cell.red { background: var(--accent); }   /* 信号红：仅破戒/中断格（fill 场景） */
+.sb-scale { display: flex; gap: 10px; font-family: var(--f-mono); font-size: 11px;
+            letter-spacing: .1em; color: var(--muted); text-transform: uppercase; padding-top: var(--sp-8); }
+.sb-scale .s { display: flex; justify-content: space-between; }
+.sb-scale .s1 { flex: 5; } .sb-scale .s2 { flex: 10; } .sb-scale .s3 { flex: 30; }
+.sb-scale b { color: var(--secondary); font-weight: 400; }
+@media (prefers-reduced-motion: reduce) { .sb-cell.cur { animation: none; } }
+@keyframes sb-pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+
+/* ———— C3 PhaseLine 阶段状态行 ———— */
+.pl-line { display: flex; justify-content: center; align-items: center; gap: var(--sp-16);
+           font-family: var(--f-mono); font-size: 11px; letter-spacing: .24em;
+           text-transform: uppercase; color: var(--secondary); }
+.pl-line b { color: var(--primary); font-weight: 500; }
+.pl-stat { width: 6px; height: 6px; border-radius: 50%; }
+.pl-stat.idle { background: var(--muted); }
+.pl-stat.running { background: var(--display); animation: pl-pulse 2s var(--ease) infinite; }
+.pl-stat.needs-input { background: var(--accent); }          /* 信号红：需要决策 */
+.pl-stat.done { background: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .pl-stat.running { animation: none; } }
+@keyframes pl-pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+
+/* ———— C4 Readout 数据行 ———— */
+.ro-row { display: flex; justify-content: center; gap: var(--sp-40); }
+.ro-item { display: flex; align-items: baseline; gap: var(--sp-8); }
+.ro-k { font-family: var(--f-mono); font-size: 11px; letter-spacing: .18em;
+        color: var(--secondary); text-transform: uppercase; }
+.ro-v { font-family: var(--f-display); font-variation-settings: 'ROND' 100;
+        font-weight: 400; font-size: 22px; color: var(--display); font-variant-numeric: tabular-nums; }
+.ro-v.signal { color: var(--accent-text); }                  /* INTERRUPT>0 信号 */
+.ro-u { font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
+
+/* ———— C5 NowPlayingCard 播放卡 ———— */
+.np-card { background: var(--glass); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+           border-radius: var(--r-md); padding: var(--sp-24);
+           display: flex; align-items: center; gap: var(--sp-24);
+           transition: transform .2s var(--ease); }
+.np-card:hover { transform: translateY(-2px); }
+.np-title { font-family: var(--f-head); font-weight: 600; font-size: 20px; color: var(--display); }
+.np-sub { margin-top: var(--sp-8); display: flex; align-items: center; gap: var(--sp-16);
+          font-family: var(--f-mono); font-size: 11px; letter-spacing: .12em;
+          color: var(--secondary); text-transform: uppercase; }
+.np-status { color: var(--primary); }
+.np-status::before { content: "["; color: var(--muted); }
+.np-status::after { content: "]"; color: var(--muted); }
+
+/* 9×9 点阵唱片（C5 内嵌，design.md §3 图标规范） */
+.dd-disc { --gs: 54px; width: var(--gs); height: var(--gs); flex-shrink: 0;
+           display: grid; grid-template-columns: repeat(9, 1fr); gap: calc(var(--gs) / 20); }
+.dd-disc.spin { animation: dd-spin 18s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .dd-disc.spin { animation: none; } }
+@keyframes dd-spin { to { transform: rotate(360deg); } }
+.dd-disc i { border-radius: 50%; background: var(--display); }
+.dd-disc i.off { background: var(--line-2); }
+/* 真实唱片图片模式：圆形裁切 + 随 spin 旋转 */
+.dd-img { display: block; }
+.dd-img img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+
+/* 点阵均衡器：3×3 圆点依次点亮 */
+.dq-eq { display: grid; grid-template-columns: repeat(3, 5px); gap: 4px; }
+.dq-eq i { width: 5px; height: 5px; border-radius: 50%; background: var(--line-2);
+           animation: dq-pulse 1.05s var(--ease) infinite; }
+.dq-eq i:nth-child(2) { animation-delay: .35s; } .dq-eq i:nth-child(3) { animation-delay: .7s; }
+.dq-eq i:nth-child(5) { animation-delay: .17s; } .dq-eq i:nth-child(6) { animation-delay: .52s; }
+.dq-eq i:nth-child(8) { animation-delay: .87s; }
+@media (prefers-reduced-motion: reduce) { .dq-eq i { animation: none; } }
+@keyframes dq-pulse { 0%,100% { background: var(--line-2); } 50% { background: var(--display); } }
+
+/* ———— C6 Buttons 按钮组 ———— */
+.bt-btn { font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+          border-radius: var(--r-sm); padding: 12px 24px; cursor: pointer;
+          transition: opacity .2s var(--ease); }
+.bt-btn:hover { opacity: .8; }
+.bt-btn:active { opacity: .7; }
+.bt-primary { background: var(--display); color: var(--bg); border: none; }   /* 黑白反转，不用红 */
+.bt-outline { background: transparent; color: var(--primary); border: 1px solid var(--line-2); }
+.bt-ghost { background: none; color: var(--secondary); border: none; padding: 12px 8px; }
+.bt-ghost:hover { color: var(--primary); }
+
+/* ———— C7 DotField 背景点场 ———— */
+.dfield { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+          background-image: radial-gradient(rgba(255,255,255,.42) 1.3px, transparent 1.3px);
+          background-size: 120px 120px; mix-blend-mode: difference; }
+
+/* ———— 组件陈列页布局（P3 验收用） ———— */
+.cs-page { position: relative; z-index: 1; max-width: 860px; margin: 0 auto;
+           padding: var(--sp-24); display: flex; flex-direction: column; gap: var(--sp-40); }
+.cs-sec { border-top: 1px solid var(--line); padding-top: var(--sp-16); display: flex;
+          flex-direction: column; gap: var(--sp-16); }
+.cs-sec > h3 { font-family: var(--f-mono); font-size: 11px; letter-spacing: .3em;
+               color: var(--secondary); text-transform: uppercase; font-weight: 400; }
