@@ -59,6 +59,9 @@ export function reducer(s, a) {
     case 'FINISH_DAY':
       return { ...s, state: 'report' }
 
+    case 'RESET':              // 报告页"开始新的一天"：回初始
+      return initialState()
+
     default:
       return s
   }

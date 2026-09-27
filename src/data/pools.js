@@ -17,3 +17,22 @@ export const POOLS = {
     tracks: ['/audio/human-01.wav', '/audio/human-02.wav'],
   },
 }
+
+// 模拟红心池（选歌页候选；demo 阶段曲名仅作 UI 展示，音频仍走 POOLS）
+export const HEART_POOL = {
+  fire: [
+    { name: '孤勇者', tag: '高能' },
+    { name: '追梦赤子心', tag: '高能' },
+    { name: '倔强', tag: '高能' },
+    { name: '怒放的生命', tag: '高能' },
+    { name: 'You Raise Me Up', tag: '钢琴' },
+  ],
+  glide: [
+    { name: '晴天', tag: '老歌' },
+    { name: '稻香', tag: '老歌' },
+    { name: '七里香', tag: '老歌' },
+    { name: '南山南', tag: '民谣' },
+    { name: '成都', tag: '民谣' },
+  ],
+}
+
