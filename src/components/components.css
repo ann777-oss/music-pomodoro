@@ -102,6 +102,13 @@
 .bt-ghost { background: none; color: var(--secondary); border: none; padding: 12px 8px; }
 .bt-ghost:hover { color: var(--primary); }
 
+/* ———— 品牌图形 · 点阵番茄（IdlePage 标识）———— */
+.tg-tomato { --gs: 96px; width: var(--gs); height: var(--gs);
+             display: grid; grid-template-columns: repeat(13, 1fr); gap: calc(var(--gs) / 30); }
+.tg-tomato i { border-radius: 50%; background: var(--accent); }
+.tg-tomato i.hl { background: color-mix(in srgb, var(--accent) 42%, var(--bg)); }  /* 果面高光 */
+.tg-tomato i.leaf { background: var(--leaf); }
+
 /* ———— C7 DotField 背景点场 ———— */
 .dfield { position: fixed; inset: 0; z-index: 0; pointer-events: none;
           background-image: radial-gradient(rgba(255,255,255,.42) 1.3px, transparent 1.3px);
