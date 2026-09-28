@@ -1,23 +1,25 @@
-// 品牌图形 · 点阵番茄：红果(--accent) + 绿叶(--leaf 新 token) + 果面高光。
-// 几何函数生成（同 DotDisc 技法）；13×13 网格：r0 茎 / r1-2 三叉叶 / r3-12 果实圆。
-// 注：品牌 wordmark 级图形，非 UI 状态信号（design.md §6 品牌图形条款）。
-export default function TomatoGlyph({ size = 96 }) {
+// 品牌图形 · 点阵番茄（可爱萌版）：横向椭圆红果 + 小翘叶 + 双点高光（果冻感）。
+// 几何函数生成：茎(0,6) / 顶叶 r1 / 侧翘叶 r2 / 果实椭圆 cx=6 cy=7.5 rx=6 ry=4.9。
+// 渲染要点：点用 width:100% + aspect-ratio:1 显式正圆（禁 grid stretch 拉成椭圆）。
+export default function TomatoGlyph({ size = 112 }) {
   const dots = []
   for (let r = 0; r < 13; r++) {
     for (let c = 0; c < 13; c++) {
       let cls = null
       if (r === 0 && c === 6) {
-        cls = 'leaf'                                   // 茎
-      } else if (r === 1 && c >= 4 && c <= 8) {
-        cls = 'leaf'                                   // 主叶
-      } else if (r === 2 && ((c >= 2 && c <= 4) || (c >= 8 && c <= 10))) {
-        cls = 'leaf'                                   // 左右展叶
+        cls = 'leaf'                                        // 茎
+      } else if (r === 1 && c >= 5 && c <= 7) {
+        cls = 'leaf'                                        // 顶叶（小而圆）
+      } else if (r === 2 && ((c >= 3 && c <= 4) || (c >= 8 && c <= 9))) {
+        cls = 'leaf'                                        // 左右翘叶
       } else {
-        const d = Math.hypot(c - 6, r - 7.8)          // 果实圆（含轻微高光点）
-        if (d <= 4.9) cls = 'fruit'
+        const dx = (c - 6) / 6                              // 横向椭圆果实
+        const dy = (r - 7.5) / 4.9
+        if (dx * dx + dy * dy <= 1) cls = 'fruit'
       }
       if (cls) {
-        const isHl = (r === 5 && c === 3) || (r === 5 && c === 4) || (r === 6 && c === 3)
+        // 左上双高光（萌感）：大高光两连点 + 小高光一点
+        const isHl = (r === 5 && (c === 3 || c === 4)) || (r === 6 && c === 3)
         dots.push(<i key={`${r}-${c}`} className={isHl ? 'hl' : cls} />)
       }
     }

@@ -69,13 +69,15 @@
 .np-status::before { content: "["; color: var(--muted); }
 .np-status::after { content: "]"; color: var(--muted); }
 
-/* 9×9 点阵唱片（C5 内嵌，design.md §3 图标规范） */
-.dd-disc { --gs: 54px; width: var(--gs); height: var(--gs); flex-shrink: 0;
+/* 9×9 点阵唱片（C5 内嵌，design.md §3 图标规范）
+   同源修复：点显式正圆（aspect-ratio），点阵模式不定容器高（dd-img 图片模式单独定高） */
+.dd-disc { --gs: 54px; width: var(--gs); flex-shrink: 0;
            display: grid; grid-template-columns: repeat(9, 1fr); gap: calc(var(--gs) / 20); }
+.dd-disc.dd-img { height: var(--gs); }
 .dd-disc.spin { animation: dd-spin 18s linear infinite; }
 @media (prefers-reduced-motion: reduce) { .dd-disc.spin { animation: none; } }
 @keyframes dd-spin { to { transform: rotate(360deg); } }
-.dd-disc i { border-radius: 50%; background: var(--display); }
+.dd-disc i { width: 100%; aspect-ratio: 1; border-radius: 50%; background: var(--display); }
 .dd-disc i.off { background: var(--line-2); }
 /* 真实唱片图片模式：圆形裁切 + 随 spin 旋转 */
 .dd-img { display: block; }
@@ -112,11 +114,13 @@
             text-align: center; outline: none; padding: 4px 8px; width: min(300px, 70vw);
             border-radius: 0; }
 
-/* ———— 品牌图形 · 点阵番茄（IdlePage 标识）———— */
-.tg-tomato { --gs: 96px; width: var(--gs); height: var(--gs);
-             display: grid; grid-template-columns: repeat(13, 1fr); gap: calc(var(--gs) / 30); }
-.tg-tomato i { border-radius: 50%; background: var(--accent); }
-.tg-tomato i.hl { background: color-mix(in srgb, var(--accent) 42%, var(--bg)); }  /* 果面高光 */
+/* ———— 品牌图形 · 点阵番茄（可爱萌版，IdlePage 标识）————
+   点 = width:100% + aspect-ratio:1 显式正圆（禁容器定高 + stretch 拉成椭圆）；
+   容器不设固定高度，行高由正圆点自然决定。 */
+.tg-tomato { --gs: 112px; width: var(--gs);
+             display: grid; grid-template-columns: repeat(13, 1fr); gap: calc(var(--gs) / 26); }
+.tg-tomato i { width: 100%; aspect-ratio: 1; border-radius: 50%; background: var(--accent); }
+.tg-tomato i.hl { background: color-mix(in srgb, var(--accent) 42%, var(--bg)); }  /* 果面双高光 */
 .tg-tomato i.leaf { background: var(--leaf); }
 
 /* ———— C7 DotField 背景点场 ———— */
