@@ -6,11 +6,14 @@ import Readout from '../components/Readout.jsx'
 import NowPlayingCard from '../components/NowPlayingCard.jsx'
 import Motto from '../components/Motto.jsx'
 import { BtnPrimary, BtnOutline } from '../components/Buttons.jsx'
+import { useLearners } from '../hooks/useLearners.js'
 import { remainText } from '../lib/timeline'
 
-// P2 番茄进行页：纯净无切歌入口；连点三下调出放弃面板（深藏应急入口）
+// P2 番茄进行页：纯净无切歌入口；连点三下调出放弃面板（深藏应急入口）；
+// 底部 TOGETHER 在学人数（陪伴感，demo 模拟数据）
 export default function FocusPage({ p, onToggleTheme }) {
   const { session, track, speed } = p
+  const learners = useLearners()
   const [panel, setPanel] = useState(false)
   const clicksRef = useRef([])
 
@@ -76,6 +79,8 @@ export default function FocusPage({ p, onToggleTheme }) {
             <span className="v">{focusMin}</span><span className="u">MIN</span></div>
           <div className="fo-st"><span className="k">STREAK</span>
             <span className="v">{p.streak}</span><span className="u">DAYS</span></div>
+          <div className="fo-st"><span className="k">TOGETHER</span>
+            <span className="v">{learners.toLocaleString('en-US')}</span><span className="u">人在学</span></div>
         </div>
       </div>
 
