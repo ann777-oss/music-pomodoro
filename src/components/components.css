@@ -102,6 +102,16 @@
 .bt-ghost { background: none; color: var(--secondary); border: none; padding: 12px 8px; }
 .bt-ghost:hover { color: var(--primary); }
 
+/* ———— Motto 励志标语（可编辑）———— */
+.mo-motto { font-family: var(--f-editorial); font-style: italic; font-size: 14px;
+            color: var(--secondary); cursor: pointer; margin: 0;
+            border-bottom: 1px dashed transparent; transition: border-color .2s var(--ease); }
+.mo-motto:hover { border-bottom-color: var(--line-2); }
+.mo-input { font-family: var(--f-ui); font-size: 14px; color: var(--primary);
+            background: transparent; border: none; border-bottom: 1px solid var(--line-2);
+            text-align: center; outline: none; padding: 4px 8px; width: min(300px, 70vw);
+            border-radius: 0; }
+
 /* ———— 品牌图形 · 点阵番茄（IdlePage 标识）———— */
 .tg-tomato { --gs: 96px; width: var(--gs); height: var(--gs);
              display: grid; grid-template-columns: repeat(13, 1fr); gap: calc(var(--gs) / 30); }

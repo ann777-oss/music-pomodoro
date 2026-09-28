@@ -4,6 +4,7 @@ import SegmentedBar from '../components/SegmentedBar.jsx'
 import PhaseLine from '../components/PhaseLine.jsx'
 import Readout from '../components/Readout.jsx'
 import NowPlayingCard from '../components/NowPlayingCard.jsx'
+import Motto from '../components/Motto.jsx'
 import { BtnPrimary, BtnOutline } from '../components/Buttons.jsx'
 import { remainText } from '../lib/timeline'
 
@@ -45,6 +46,7 @@ export default function FocusPage({ p, onToggleTheme }) {
       <div className="fo-hero">
         <DotClock mm={remain.slice(0, 2)} ss={remain.slice(3)} />
         <PhaseLine phaseKey={session.phase.key} state="running" />
+        <Motto />
       </div>
 
       <div style={{ marginTop: 48 }}>
