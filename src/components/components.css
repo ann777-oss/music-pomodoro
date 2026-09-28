@@ -114,13 +114,13 @@
             text-align: center; outline: none; padding: 4px 8px; width: min(300px, 70vw);
             border-radius: 0; }
 
-/* ———— 品牌图形 · 点阵番茄（可爱萌版，IdlePage 标识）————
-   点 = width:100% + aspect-ratio:1 显式正圆（禁容器定高 + stretch 拉成椭圆）；
-   容器不设固定高度，行高由正圆点自然决定。 */
+/* ———— 品牌图形 · 点阵番茄（halftone 波普版，IdlePage 标识）————
+   15×15 网格；核心实心 / 边缘交错跳点（密度消散）；左上弧形高光带；
+   点 = width:100% + aspect-ratio:1 显式正圆（禁 stretch 拉椭圆）。 */
 .tg-tomato { --gs: 112px; width: var(--gs);
-             display: grid; grid-template-columns: repeat(13, 1fr); gap: calc(var(--gs) / 26); }
+             display: grid; grid-template-columns: repeat(15, 1fr); gap: calc(var(--gs) / 28); }
 .tg-tomato i { width: 100%; aspect-ratio: 1; border-radius: 50%; background: var(--accent); }
-.tg-tomato i.hl { background: color-mix(in srgb, var(--accent) 42%, var(--bg)); }  /* 果面双高光 */
+.tg-tomato i.hl { background: color-mix(in srgb, var(--accent) 42%, var(--bg)); }  /* 高光带 */
 .tg-tomato i.leaf { background: var(--leaf); }
 
 /* ———— C7 DotField 背景点场 ———— */
