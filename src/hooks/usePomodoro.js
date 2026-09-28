@@ -15,6 +15,7 @@ const LS_DAY = 'mp-last-choose-day'
 const LS_STREAK = 'mp-streak'
 const LS_ONBOARD = 'mp-onboarded'
 const LS_LIFETIME = 'mp-lifetime'   // 跨天累计：{ min, tracks }
+const LS_YESTERDAY = 'mp-yesterday' // 昨日成就：{ date: 'YYYY-MM-DD', count: N }
 
 function readStreak() {
   try { return JSON.parse(localStorage.getItem(LS_STREAK)) || { days: 0, last: '' } }
@@ -24,6 +25,11 @@ function readStreak() {
 function readLifetime() {
   try { return JSON.parse(localStorage.getItem(LS_LIFETIME)) || { min: 0, tracks: 0 } }
   catch { return { min: 0, tracks: 0 } }
+}
+
+function readYesterday() {
+  try { return JSON.parse(localStorage.getItem(LS_YESTERDAY)) || null }
+  catch { return null }
 }
 
 // 当天已选过歌：恢复两首歌（重开应用不重选）；否则全新初始态
@@ -48,6 +54,7 @@ export function usePomodoro() {
   const [chooseLeft, setChooseLeft] = useState(CHOOSE_SEC)
   const [streak, setStreak] = useState(() => readStreak().days)
   const [lifetime, setLifetime] = useState(() => readLifetime())
+  const [yesterday, setYesterday] = useState(() => readYesterday())   // 昨日成就（首页 footnote）
   const trackSetRef = useRef(new Set())   // 当日 unique 曲目
 
   // 最新状态镜像（事件监听器读取，避免闭包过期）
@@ -127,7 +134,7 @@ export function usePomodoro() {
   }
 
   return {
-    session, track, restLeft, chooseLeft, speed, streak, lifetime,
+    session, track, restLeft, chooseLeft, speed, streak, lifetime, yesterday,
     todayTracks: trackSetRef.current.size,
 
     start: () => dispatch({ type: 'START_CHOOSE' }),
@@ -181,6 +188,10 @@ export function usePomodoro() {
       }
       try { localStorage.setItem(LS_LIFETIME, JSON.stringify(nextLife)) } catch {}
       setLifetime(nextLife)
+      // 昨日成就记录（首页 footnote 显示；隔天打开仍有效）
+      const rec = { date: todayStr(), count: sessionRef.current.history.filter(h => h.result === 'done').length }
+      try { localStorage.setItem(LS_YESTERDAY, JSON.stringify(rec)) } catch {}
+      setYesterday(rec)
       trackSetRef.current = new Set()               // 新的一天重新计数
       dispatch({ type: 'FINISH_DAY' })
     },

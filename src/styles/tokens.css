@@ -12,7 +12,6 @@
   --line:#262626; --line-2:#3A3A3A;
   --muted:#5A5A5A; --secondary:#8C8C8C; --primary:#EDEDED; --display:#FFF;
   --accent:#D71921; --accent-ink:#FFFFFF; --accent-text:#FF4438;
-  --leaf:#5FA867;               /* 品牌图形专用：番茄叶绿（非 UI 状态色） */
   --success:#7BE38A; --warning:#F2C94C; --error:#FF5247;
   --f-display:'Doto',monospace; --f-ui:'Geist','PingFang SC','Microsoft YaHei','Helvetica Neue',Arial,system-ui,sans-serif; --f-mono:'Geist Mono','PingFang SC','Microsoft YaHei',ui-monospace,monospace;
   --f-head:'Geist','Helvetica Neue',Arial,sans-serif; --f-editorial:'Newsreader',Georgia,serif;
@@ -28,7 +27,6 @@
   --dotbg:rgba(0,0,0,.42); --glass:rgba(255,255,255,.96); --glass-brd:rgba(0,0,0,.08);
   /* light mode: signal red holds on white; foreground variant darkened slightly for text/border/icon contrast */
   --accent:#D71921; --accent-text:#C2141C;
-  --leaf:#3D8B4A;
   /* status colors darkened for readable foreground on light surfaces */
   --success:#3D8B4A; --warning:#9C6B00; --error:#D23B30;
 }

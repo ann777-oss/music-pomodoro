@@ -9,11 +9,37 @@
 .pg-topbar .brand { color: var(--primary); font-weight: 500; letter-spacing: .4em; }
 .pg-right { display: flex; align-items: center; gap: var(--sp-16); }
 
-/* —— Idle 首页 —— */
+/* —— Idle 首页（方案二：45:00 主角 + 旋律波形 + 昨日成就）—— */
 .id-center { flex: 1; display: flex; flex-direction: column; align-items: center;
-             justify-content: center; gap: var(--sp-40); }
+             justify-content: center; gap: var(--sp-24); padding-bottom: 4vh; }
+.id-big { font-family: var(--f-display); font-variation-settings: 'ROND' 100; font-weight: 400;
+          font-size: clamp(96px, 15vw, 148px); line-height: 1; color: var(--display);
+          letter-spacing: .02em; }
+.id-colon { display: inline-block; transform: translateY(-.06em);
+            animation: id-breath 4.2s ease-in-out infinite; }
+@keyframes id-breath { 0%, 100% { opacity: 1 } 50% { opacity: .25 } }
+.id-brand { font-family: var(--f-mono); font-size: 13px; letter-spacing: .55em;
+            text-indent: .55em; color: var(--secondary); margin: 4px 0 0; }
 .id-slogan { font-family: var(--f-editorial); font-style: italic; font-size: 16px;
-             color: var(--secondary); }
+             color: var(--secondary); margin: 0; }
+/* 底部乐谱区：melody 与 labels 严格同构（三段均分 + 同 gap → 竖条覆盖各自标签上方） */
+.id-bottom { padding: 0 var(--sp-32) 28px; }
+.id-scorewrap { margin: 0 auto; width: fit-content; min-width: min(560px, 84vw); }
+.id-melody { display: flex; gap: 20px; align-items: flex-end; height: 34px; }
+.id-seg { flex: 1; display: flex; gap: 4px; align-items: flex-end; min-width: 0; }
+.id-bar { flex: 1 0 1px; min-width: 1px; background: var(--display); border-radius: 0;
+          animation: id-shimmer 9s linear infinite; }
+@keyframes id-shimmer { 0% { opacity: .4 } 6% { opacity: 1 } 12% { opacity: .4 } 100% { opacity: .4 } }
+.id-labels { display: flex; gap: 20px; margin-top: 12px; font-family: var(--f-mono);
+             font-size: 10px; letter-spacing: .1em; color: var(--muted);
+             text-transform: uppercase; white-space: nowrap; }
+.id-labels span { flex: 1; text-align: center; min-width: 0; }
+.id-footnote { margin-top: 22px; font-family: var(--f-editorial); font-style: italic;
+               font-size: 13px; color: var(--muted); text-align: center; }
+@media (prefers-reduced-motion: reduce) {
+  .id-bar { animation: none; }
+  .id-colon { animation: none; }
+}
 
 /* —— Choose 选歌页 —— */
 .ch-clockwrap { text-align: center; margin-top: var(--sp-40); }

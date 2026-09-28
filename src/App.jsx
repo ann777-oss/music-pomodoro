@@ -24,7 +24,7 @@ function MainApp() {
          style={{ background: 'var(--bg)', color: 'var(--primary)', minHeight: '100vh',
                   transition: 'background .4s var(--ease), color .4s var(--ease)' }}>
       <DotField />
-      {p.session.state === 'idle' && <IdlePage onStart={p.start} />}
+      {p.session.state === 'idle' && <IdlePage p={p} onStart={p.start} />}
       {p.session.state === 'choosing' && <ChoosePage p={p} />}
       {p.session.state === 'running' &&
         <FocusPage p={p} onToggleTheme={() => setLight(l => !l)} />}
