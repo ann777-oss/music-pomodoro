@@ -2,9 +2,17 @@ import Readout from '../components/Readout.jsx'
 import SegmentedBar from '../components/SegmentedBar.jsx'
 import { BtnPrimary } from '../components/Buttons.jsx'
 
-// P4 日报告页：学习结束时；破戒番茄标红中断格
+// 鼓励语梯度：按今日完成数（Newsreader 每页一句配额）
+function encouragement(done) {
+  if (done === 0) return '今天没让番茄响起——明天，唱针再落。'
+  if (done <= 2) return '阶梯的第一级，已经砌好。'
+  if (done <= 4) return '今天的深度，值得写进乐谱。'
+  return '名副其实的一天，指挥家。'
+}
+
+// P4 日报告页：学习结束时；破戒番茄标红中断格；累计数据 + 鼓励（改动 3）
 export default function ReportPage({ p }) {
-  const { session } = p
+  const { session, lifetime } = p
   const totalMin = Math.floor(session.history.reduce((a, h) => a + h.duration, 0) / 60)
   const doneCount = session.history.filter(h => h.result === 'done').length
   const longestMin = Math.max(0, ...session.history.map(h => Math.floor(h.duration / 60)))
@@ -29,6 +37,16 @@ export default function ReportPage({ p }) {
           完成番茄 · 最长连续 MIN · 中断（信号红）</p>
       </div>
 
+      {/* 跨天累计 + 听歌数（改动 3） */}
+      <div className="rp-acc">
+        <span className="ro-k">ACCUMULATED · 累计</span>
+        <span className="rp-acc-num">{(lifetime.min / 60).toFixed(1)}</span>
+        <span className="ro-u">小时专注</span>
+        <span className="rp-acc-dot">·</span>
+        <span className="rp-acc-num">{lifetime.tracks}</span>
+        <span className="ro-u">首歌听过</span>
+      </div>
+
       <div className="rp-rows">
         {session.history.map((h, i) => (
           <div key={i} className="rp-row">
@@ -46,6 +64,8 @@ export default function ReportPage({ p }) {
           </div>
         ))}
       </div>
+
+      <p className="rp-encourage">{encouragement(doneCount)}</p>
 
       <div className="rp-actions">
         <BtnPrimary onClick={p.resetDay}>开始新的一天</BtnPrimary>

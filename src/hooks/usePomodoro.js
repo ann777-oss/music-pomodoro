@@ -14,10 +14,16 @@ const LS_SONGS = 'mp-songs'
 const LS_DAY = 'mp-last-choose-day'
 const LS_STREAK = 'mp-streak'
 const LS_ONBOARD = 'mp-onboarded'
+const LS_LIFETIME = 'mp-lifetime'   // 跨天累计：{ min, tracks }
 
 function readStreak() {
   try { return JSON.parse(localStorage.getItem(LS_STREAK)) || { days: 0, last: '' } }
   catch { return { days: 0, last: '' } }
+}
+
+function readLifetime() {
+  try { return JSON.parse(localStorage.getItem(LS_LIFETIME)) || { min: 0, tracks: 0 } }
+  catch { return { min: 0, tracks: 0 } }
 }
 
 // 当天已选过歌：恢复两首歌（重开应用不重选）；否则全新初始态
@@ -41,6 +47,8 @@ export function usePomodoro() {
   const [restLeft, setRestLeft] = useState(REST_SEC)
   const [chooseLeft, setChooseLeft] = useState(CHOOSE_SEC)
   const [streak, setStreak] = useState(() => readStreak().days)
+  const [lifetime, setLifetime] = useState(() => readLifetime())
+  const trackSetRef = useRef(new Set())   // 当日 unique 曲目
 
   // 最新状态镜像（事件监听器读取，避免闭包过期）
   const sessionRef = useRef(session)
@@ -95,8 +103,10 @@ export function usePomodoro() {
   const ensureEngine = () => {
     if (!engineRef.current) {
       engineRef.current = new AudioEngine(POOLS)
-      engineRef.current.onTrackChange((pool, file) =>
-        setTrack({ pool, file: file.split('/').pop() }))
+      engineRef.current.onTrackChange((pool, file) => {
+        trackSetRef.current.add(file)                 // 当日听歌数（unique）
+        setTrack({ pool, file: file.split('/').pop() })
+      })
     }
     return engineRef.current
   }
@@ -117,7 +127,8 @@ export function usePomodoro() {
   }
 
   return {
-    session, track, restLeft, chooseLeft, speed, streak,
+    session, track, restLeft, chooseLeft, speed, streak, lifetime,
+    todayTracks: trackSetRef.current.size,
 
     start: () => dispatch({ type: 'START_CHOOSE' }),
 
@@ -161,6 +172,16 @@ export function usePomodoro() {
           setStreak(days)
         }
       }
+      // 跨天累计：专注分钟 + 听歌数（含今日）
+      const todayMin = Math.floor(
+        sessionRef.current.history.reduce((a, h) => a + h.duration, 0) / 60)
+      const nextLife = {
+        min: readLifetime().min + todayMin,
+        tracks: readLifetime().tracks + trackSetRef.current.size,
+      }
+      try { localStorage.setItem(LS_LIFETIME, JSON.stringify(nextLife)) } catch {}
+      setLifetime(nextLife)
+      trackSetRef.current = new Set()               // 新的一天重新计数
       dispatch({ type: 'FINISH_DAY' })
     },
 
