@@ -87,6 +87,8 @@ export class AudioEngine {
     this.idx = {}
     // 滑入队列：用户选的启动歌排最前，之后按池子顺序
     this.glideQueue = [songs.glideStart, ...this.pools.glide.tracks]
+    // 心流声场（改动 7）：用户选的类型 → flow 池切换（默认 flow-01 预置）
+    if (songs.flowFile) this.pools.flow.tracks = [songs.flowFile]
     this.lastSec = 0
     this.phasePlaying = null
     this.pendingPool = null

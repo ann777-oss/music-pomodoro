@@ -3,7 +3,7 @@
 import { useEffect, useReducer, useRef, useState } from 'react'
 import { initialState, reducer } from '../lib/session'
 import { AudioEngine } from '../lib/audioEngine'
-import { POOLS } from '../data/pools'
+import { POOLS, FLOW_TYPES } from '../data/pools'
 import { TOTAL_SEC, REST_SEC, CHOOSE_SEC } from '../lib/timeline'
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
@@ -129,8 +129,11 @@ export function usePomodoro() {
     ensureEngine()
     secRef.current = 0
     persistSongs(songs)
+    // flowType（声场类型 key）→ engine 用的 flowFile；session.songs 保留 flowType（展示）
+    const { flowType, ...rest } = songs
+    const payload = { ...rest, flowFile: flowType ? FLOW_TYPES[flowType]?.file : null }
     dispatch({ type: 'CONFIRM_SONGS', songs, today: todayStr() })
-    await engineRef.current.startPomodoro(songs)
+    await engineRef.current.startPomodoro(payload)
   }
 
   return {

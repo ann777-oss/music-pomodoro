@@ -7,6 +7,7 @@ import NowPlayingCard from '../components/NowPlayingCard.jsx'
 import Motto from '../components/Motto.jsx'
 import { BtnPrimary, BtnOutline } from '../components/Buttons.jsx'
 import { useLearners } from '../hooks/useLearners.js'
+import { FLOW_TYPES } from '../data/pools'
 import { remainText } from '../lib/timeline'
 
 // P2 番茄进行页：纯净无切歌入口；连点三下调出放弃面板（深藏应急入口）；
@@ -65,7 +66,10 @@ export default function FocusPage({ p, onToggleTheme }) {
         <NowPlayingCard
           title={track.pool === 'fire' ? (session.songs?.fireName || '点火曲')
                 : track.pool === 'glide' ? (session.songs?.glideName || '滑入曲')
-                : track.pool === 'flow' ? '心流曲库 · 纯音乐'
+                : track.pool === 'flow'
+                  ? (session.songs?.flowType
+                      ? `${FLOW_TYPES[session.songs.flowType]?.label} · 心流声场`
+                      : '心流曲库 · 纯音乐')
                 : '大鱼 · 纯音乐版'}
           sub={`${track.pool.toUpperCase()} POOL · FADE 10S`}
         />

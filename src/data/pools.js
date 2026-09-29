@@ -18,6 +18,17 @@ export const POOLS = {
   },
 }
 
+// 心流声场类型（改动 7：选歌页可选/可试听）。
+// 音频由 gen-audio.mjs 合成（80s loop）；demo 元数据，接入 TME 音乐疗愈专区即真实内容。
+export const FLOW_TYPES = {
+  rain:    { file: '/audio/flow-rain.wav',    label: '雨声',   desc: '白噪音 · 经典学习声场' },
+  wave:    { file: '/audio/flow-wave.wav',    label: '海浪',   desc: '白噪音 · 慢涌节律' },
+  piano:   { file: '/audio/flow-piano.wav',   label: '钢琴',   desc: '纯音乐 · C-Am-F-G 慢和弦' },
+  lofi:    { file: '/audio/flow-lofi.wav',    label: 'Lo-fi',  desc: '80 BPM · 黑胶炒豆' },
+  library: { file: '/audio/flow-library.wav', label: '图书馆', desc: '环境音 · 致敬民间智慧' },
+}
+export const FLOW_DEFAULT = 'piano'
+
 // 模拟红心池（选歌页候选；demo 阶段曲名仅作 UI 展示，音频仍走 POOLS）
 export const HEART_POOL = {
   fire: [

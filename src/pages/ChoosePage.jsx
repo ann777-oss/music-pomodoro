@@ -2,17 +2,20 @@ import { useEffect, useRef, useState } from 'react'
 import DotClock from '../components/DotClock.jsx'
 import SongPicker from '../components/SongPicker.jsx'
 import { BtnPrimary, BtnGhost } from '../components/Buttons.jsx'
-import { HEART_POOL } from '../data/pools'
+import { HEART_POOL, FLOW_TYPES, FLOW_DEFAULT } from '../data/pools'
 import { CHOOSE_SEC } from '../lib/timeline'
 
 // P1 选歌页：90 秒限时选两首歌（每日首番茄；超时自动继承当前候选）。
-// 改动 6：定向选歌——"从歌单选"打开 SongPicker（搜索 + 阶段预筛列表），
-// "换一首"保留为快速轮换（90s 压力下的低摩擦路径）。
+// 改动 6：定向选歌——"从歌单选"打开 SongPicker（搜索 + 阶段预筛列表）。
+// 改动 7：心流声场——第三导演位（5 类型 pill 一键切换 + 15s 试听）。
 export default function ChoosePage({ p }) {
   const [fireIdx, setFireIdx] = useState(() => Math.floor(Math.random() * HEART_POOL.fire.length))
   const [glideIdx, setGlideIdx] = useState(() => Math.floor(Math.random() * HEART_POOL.glide.length))
   const [picked, setPicked] = useState({ ignite: null, glide: null })   // 歌单定向选中（覆盖轮换候选）
   const [picker, setPicker] = useState(null)                             // null | 'ignite' | 'glide'
+  const [flowType, setFlowType] = useState(FLOW_DEFAULT)                // 心流声场类型
+  const [previewing, setPreviewing] = useState(null)                    // 正在试听的类型 key
+  const previewRef = useRef(null)                                       // 试听 Audio（与主引擎隔离）
   const confirmedRef = useRef(false)
   const { chooseLeft } = p
 
@@ -24,14 +27,46 @@ export default function ChoosePage({ p }) {
     ? { title: picked.glide.title, tag: `${picked.glide.artist} · ${picked.glide.bpm} BPM` }
     : { title: HEART_POOL.glide[glideIdx].name, tag: `${HEART_POOL.glide[glideIdx].tag} · 熟悉旋律` }
 
+  const stopPreview = () => {
+    if (previewRef.current) {
+      previewRef.current.pause()
+      previewRef.current = null
+    }
+    setPreviewing(null)
+  }
+
+  // 15s 试听：与主引擎完全隔离（独立 Audio，音量 0.5，自动停）
+  const togglePreview = type => {
+    stopPreview()
+    if (type !== previewing) {
+      const a = new Audio(FLOW_TYPES[type].file)
+      a.volume = 0.5
+      a.onended = () => stopPreview()
+      a.play().catch(() => {})                      // 浏览器拦截时静默
+      previewRef.current = a
+      setPreviewing(type)
+      setTimeout(() => {                            // 最多 15s
+        if (previewRef.current === a) stopPreview()
+      }, 15000)
+    }
+  }
+
+  // 卸载 / 确认开跑：停预览（番茄开始不被试听干扰）
+  useEffect(() => () => stopPreview(), [])
+  useEffect(() => {
+    if (chooseLeft <= 0) stopPreview()
+  }, [chooseLeft])
+
   const confirm = () => {
     if (confirmedRef.current) return
     confirmedRef.current = true
+    stopPreview()
     p.confirmSongs({
       fire: '/audio/fire-01.wav',
       glideStart: '/audio/glide-01.wav',
       fireName: fireView.title,
       glideName: glideView.title,
+      flowType,
     })
   }
 
@@ -86,6 +121,27 @@ export default function ChoosePage({ p }) {
             <button className="ch-pick" onClick={() => setPicker('glide')}>从歌单选</button>
           </div>
         </div>
+      </div>
+
+      {/* Ⅲ 心流声场（改动 7）：5 类型 pill 一键切换 + 15s 试听 */}
+      <div className="ch-flowcard">
+        <div className="ch-slot"><span>Ⅲ FLOW</span><span>心流 · 声场</span></div>
+        <div className="ch-flowrow">
+          <div className="ch-pills">
+            {Object.entries(FLOW_TYPES).map(([key, t]) => (
+              <button key={key}
+                className={`ch-pill${flowType === key ? ' on' : ''}`}
+                onClick={() => { stopPreview(); setFlowType(key) }}>
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <button className={`ch-pill prev${previewing ? ' on' : ''}`}
+            onClick={() => togglePreview(flowType)}>
+            {previewing ? '■ 停止' : '▶ 试听'}
+          </button>
+        </div>
+        <div className="ch-tag">{FLOW_TYPES[flowType].desc} · 默认钢琴，随时可换</div>
       </div>
 
       <div className="ch-actions">

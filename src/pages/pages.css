@@ -77,6 +77,21 @@
            padding: 6px 14px; cursor: pointer; transition: color .2s, border-color .2s; }
 .ch-pick:hover { color: var(--display); border-color: var(--display); }
 
+/* —— Ⅲ 心流声场卡片（改动 7）—— */
+.ch-flowcard { margin-top: var(--sp-16); background: var(--glass);
+               -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+               border-radius: var(--r-md); padding: var(--sp-20);
+               display: flex; flex-direction: column; gap: var(--sp-12); }
+.ch-flowrow { display: flex; align-items: center; gap: var(--sp-12); flex-wrap: wrap; }
+.ch-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.ch-pill { font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em;
+           color: var(--secondary); background: none; border: 1px solid var(--line-2);
+           border-radius: var(--r-sm); padding: 7px 16px; cursor: pointer;
+           transition: color .2s, border-color .2s, background .2s; }
+.ch-pill:hover { color: var(--display); border-color: var(--display); }
+.ch-pill.on { background: var(--display); color: var(--bg); border-color: var(--display); }
+.ch-pill.prev { border-style: dashed; }   /* 试听按钮：虚线边区分（非选择态） */
+
 /* —— Choose 选歌页 —— */
 .ch-clockwrap { text-align: center; margin-top: var(--sp-40); }
 .ch-cards { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-16); margin-top: var(--sp-32); }
