@@ -1,5 +1,5 @@
 // 番茄会话状态机（纯逻辑，无 UI/音频依赖）。
-// 状态：idle → choosing → running ⇄ (中断仅记录) → resting → running/choosing → report
+// 状态：idle → choosing → running ⇄ (中断仅记录 / 可暂停) → resting → running/choosing → report
 import { PHASES, TOTAL_SEC, phaseAt, minuteDone } from './timeline'
 
 export function initialState() {
@@ -13,6 +13,7 @@ export function initialState() {
     interrupts: [],           // [{ kind, at, dur }] 只记录，不干扰
     history: [],              // 已完成/作废番茄：{ result, index, duration, interrupts }
     abandoned: false,         // 当前颗是否已作废
+    paused: false,            // 暂停中（改动 8）：时钟与音乐停走，不记中断，不计时长
     lastChooseDay: null,      // 最后一次选歌日期（YYYY-MM-DD），用于每日首次判定
   }
 }
@@ -25,7 +26,7 @@ export function reducer(s, a) {
     case 'CONFIRM_SONGS':
       return { ...s, songs: a.songs, state: 'running', secElapsed: 0,
                phase: PHASES[0], minuteDone: 0, interrupts: [], abandoned: false,
-               lastChooseDay: a.today ?? s.lastChooseDay }
+               paused: false, lastChooseDay: a.today ?? s.lastChooseDay }
 
     case 'START_POMODORO':    // 休息结束后：同日继承选歌直接开跑；跨日回选歌
       const knownDay = a.lastChooseDay !== undefined ? a.lastChooseDay : s.lastChooseDay
@@ -33,16 +34,24 @@ export function reducer(s, a) {
         return { ...s, state: 'choosing' }
       }
       return { ...s, state: 'running', secElapsed: 0, phase: PHASES[0],
-               minuteDone: 0, interrupts: [], abandoned: false }
+               minuteDone: 0, interrupts: [], abandoned: false, paused: false }
 
     case 'TICK':
-      if (s.state !== 'running') return s
+      if (s.state !== 'running' || s.paused) return s
       if (a.sec >= TOTAL_SEC) {
         return { ...s, state: 'resting', secElapsed: TOTAL_SEC, minuteDone: 45,
                  history: [...s.history, { result: 'done', index: s.pomodoroIndex,
                    duration: TOTAL_SEC, interrupts: s.interrupts }] }
       }
       return { ...s, secElapsed: a.sec, phase: phaseAt(a.sec), minuteDone: minuteDone(a.sec) }
+
+    case 'PAUSE':             // 暂停 ≠ 破戒：接电话/稍离的正当场景，番茄如实保留
+      if (s.state !== 'running' || s.paused) return s
+      return { ...s, paused: true }
+
+    case 'RESUME':
+      if (s.state !== 'running' || !s.paused) return s
+      return { ...s, paused: false }
 
     case 'INTERRUPT':        // 纯记录：不提醒、不弹窗、不惩罚
       return { ...s, interrupts: [...s.interrupts, { kind: a.kind, at: a.at, dur: a.dur }] }

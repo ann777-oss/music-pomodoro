@@ -61,16 +61,16 @@ export function usePomodoro() {
   const sessionRef = useRef(session)
   useEffect(() => { sessionRef.current = session }, [session])
 
-  // —— 主时钟：running 期每虚拟秒 TICK + 引擎 tick ——
+  // —— 主时钟：running 期每虚拟秒 TICK + 引擎 tick（暂停时停走，改动 8）——
   useEffect(() => {
-    if (session.state !== 'running') return
+    if (session.state !== 'running' || session.paused) return
     const timer = setInterval(() => {
       secRef.current = secRef.current + 1
       dispatch({ type: 'TICK', sec: secRef.current })
       engineRef.current?.tick(Math.min(secRef.current, TOTAL_SEC - 1))
     }, 1000 / speedRef.current)
     return () => clearInterval(timer)
-  }, [session.state, speed])
+  }, [session.state, session.paused, speed])
 
   // —— 番茄结束（进入 resting）：人间池 ——
   useEffect(() => {
@@ -95,10 +95,11 @@ export function usePomodoro() {
     return () => clearInterval(t)
   }, [session.state, speed])
 
-  // —— 中断监听：切走标签页 = 分心信号（只记录，不打扰）——
+  // —— 中断监听：切走标签页 = 分心信号（只记录，不打扰；暂停中不算分心，改动 8）——
   useEffect(() => {
     const onVis = () => {
-      if (document.visibilityState === 'hidden' && sessionRef.current.state === 'running') {
+      const s = sessionRef.current
+      if (document.visibilityState === 'hidden' && s.state === 'running' && !s.paused) {
         dispatch({ type: 'INTERRUPT', kind: 'visibility', at: secRef.current, dur: 0 })
       }
     }
@@ -141,6 +142,16 @@ export function usePomodoro() {
     todayTracks: trackSetRef.current.size,
 
     start: () => dispatch({ type: 'START_CHOOSE' }),
+
+    // 暂停/继续（改动 8）：时钟停走由 reducer/TICK 兜底，音频由引擎淡出淡入
+    pause: () => {
+      dispatch({ type: 'PAUSE' })
+      engineRef.current?.pause()
+    },
+    resume: () => {
+      dispatch({ type: 'RESUME' })
+      engineRef.current?.resume()
+    },
 
     confirmSongs,
 

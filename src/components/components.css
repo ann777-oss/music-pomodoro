@@ -40,6 +40,7 @@
 .pl-stat { width: 6px; height: 6px; border-radius: 50%; }
 .pl-stat.idle { background: var(--muted); }
 .pl-stat.running { background: var(--display); animation: pl-pulse 2s var(--ease) infinite; }
+.pl-stat.paused { background: var(--secondary); }           /* 暂停：静止灰点（改动 8） */
 .pl-stat.needs-input { background: var(--accent); }          /* 信号红：需要决策 */
 .pl-stat.done { background: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .pl-stat.running { animation: none; } }

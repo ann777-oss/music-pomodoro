@@ -40,6 +40,13 @@ export default function FocusPage({ p, onToggleTheme }) {
         <span className="brand">MUSIC POMODORO</span>
         <span className="pg-right">
           <span>SESSION {String(session.pomodoroIndex + 1).padStart(2, '0')}</span>
+          {/* 暂停/继续（改动 8）：常驻按钮。暂停 ≠ 破戒，仅放弃作废 */}
+          <BtnOutline onClick={(e) => {
+            e.stopPropagation()
+            session.paused ? p.resume() : p.pause()
+          }}>
+            {session.paused ? '▶ 继续' : '❚❚ 暂停'}
+          </BtnOutline>
           <BtnOutline onClick={(e) => { e.stopPropagation(); p.setSpeed(speed === 1 ? 15 : 1) }}>
             SIM ×{speed}
           </BtnOutline>
@@ -49,7 +56,7 @@ export default function FocusPage({ p, onToggleTheme }) {
 
       <div className="fo-hero">
         <DotClock mm={remain.slice(0, 2)} ss={remain.slice(3)} />
-        <PhaseLine phaseKey={session.phase.key} state="running" />
+        <PhaseLine phaseKey={session.phase.key} state={session.paused ? 'paused' : 'running'} />
         <Motto />
       </div>
 
