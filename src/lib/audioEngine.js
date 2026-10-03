@@ -1,7 +1,7 @@
 // 音频引擎：三阶段曲池调度 + 双轨 crossfade + 音量曲线 + 灵活边界。
 // 引擎以外部喂入的 secElapsed（虚拟番茄时间）为准——音频自然播放，
 // 阶段切换在时间轴上发生，但尊重歌曲完整性（±15s 容差，PRD 4.2 灵活边界原则）。
-import { PHASES, phaseAt, targetVolume } from './timeline'
+import { getTimeline, phaseAt, targetVolume } from './timeline'
 
 const FADE_SEC = 10          // crossfade 时长
 const TOLERANCE_SEC = 15     // 灵活边界容差
@@ -131,8 +131,9 @@ export class AudioEngine {
       return
     }
     // ② 提前切：距下一阶段边界 ≤15s → 歌播完直接进下池
-    const i = PHASES.findIndex(p => p.key === cur)
-    const nextPhase = PHASES[i + 1]
+    const phases = getTimeline().phases
+    const i = phases.findIndex(p => p.key === cur)
+    const nextPhase = phases[i + 1]
     if (nextPhase && nextPhase.endMin * 60 - sec <= TOLERANCE_SEC) {
       await this._play(nextPhase.key)
       return

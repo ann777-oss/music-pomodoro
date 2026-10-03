@@ -41,6 +41,36 @@
   .id-colon { animation: none; }
 }
 
+/* —— SettingsPanel 阶段时长设置（改动 11）—— */
+.st-list { margin-top: var(--sp-8); }
+.st-row { display: flex; align-items: center; gap: var(--sp-16);
+          border-bottom: 1px solid var(--line-1); padding: 14px 2px; }
+.st-name { font-family: var(--f-head); font-weight: 600; font-size: 14px; color: var(--display); }
+.st-range { font-family: var(--f-mono); font-size: 9px; letter-spacing: .1em;
+            color: var(--muted); flex: 1; }
+.st-ctrl { display: flex; align-items: center; gap: 6px; }
+.st-btn { font-family: var(--f-mono); font-size: 11px; color: var(--secondary);
+          background: none; border: 1px solid var(--line-2); border-radius: var(--r-sm);
+          padding: 4px 10px; cursor: pointer; transition: color .2s, border-color .2s; }
+.st-btn:hover { color: var(--display); border-color: var(--display); }
+.st-val { font-family: var(--f-display); font-variation-settings: 'ROND' 100; font-weight: 400;
+          font-size: 24px; color: var(--display); min-width: 44px; text-align: center;
+          font-variant-numeric: tabular-nums; }
+.st-total { font-family: var(--f-mono); font-size: 11px; letter-spacing: .1em;
+            color: var(--secondary); margin: var(--sp-16) 0 0; }
+.st-total b { font-family: var(--f-display); font-variation-settings: 'ROND' 100; font-weight: 400;
+              font-size: 18px; color: var(--display); margin: 0 4px; }
+.st-hint { color: var(--muted); margin-left: 8px; }
+.st-actions { display: flex; gap: var(--sp-12); margin-top: var(--sp-24); }
+.st-save { flex: 1; font-family: var(--f-mono); font-size: 13px; letter-spacing: .14em;
+           background: var(--display); color: var(--bg); border: none;
+           padding: 12px 0; cursor: pointer; border-radius: var(--r-sm); }
+.st-save:hover { opacity: .8; }
+.st-cancel { font-family: var(--f-mono); font-size: 13px; letter-spacing: .14em;
+             background: none; color: var(--secondary); border: 1px solid var(--line-2);
+             padding: 12px 28px; cursor: pointer; border-radius: var(--r-sm); }
+.st-cancel:hover { color: var(--display); border-color: var(--display); }
+
 /* —— SongPicker 歌单面板（改动 6：定向选歌）—— */
 .sp-overlay { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .55);
               display: flex; align-items: center; justify-content: center; padding: var(--sp-32); }

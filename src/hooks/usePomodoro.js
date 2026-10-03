@@ -4,7 +4,7 @@ import { useEffect, useReducer, useRef, useState } from 'react'
 import { initialState, reducer } from '../lib/session'
 import { AudioEngine } from '../lib/audioEngine'
 import { POOLS, FLOW_TYPES } from '../data/pools'
-import { TOTAL_SEC, REST_SEC, CHOOSE_SEC } from '../lib/timeline'
+import { getTimeline, setTimeline, readTimelineCfg, persistTimelineCfg, REST_SEC, CHOOSE_SEC } from '../lib/timeline'
 
 const todayStr = () => new Date().toISOString().slice(0, 10)
 const yesterdayStr = () => new Date(Date.now() - 86400000).toISOString().slice(0, 10)
@@ -55,7 +55,11 @@ export function usePomodoro() {
   const [streak, setStreak] = useState(() => readStreak().days)
   const [lifetime, setLifetime] = useState(() => readLifetime())
   const [yesterday, setYesterday] = useState(() => readYesterday())   // 昨日成就（首页 footnote）
+  const [tlVersion, setTlVersion] = useState(0)   // 时间轴配置版本（改动 11：保存后触发重渲染）
   const trackSetRef = useRef(new Set())   // 当日 unique 曲目
+
+  // 启动：恢复自定义时间轴（mp-timeline；CONFIRM_SONGS 前生效即可）
+  useEffect(() => { setTimeline(readTimelineCfg()) }, [])
 
   // 最新状态镜像（事件监听器读取，避免闭包过期）
   const sessionRef = useRef(session)
@@ -67,7 +71,7 @@ export function usePomodoro() {
     const timer = setInterval(() => {
       secRef.current = secRef.current + 1
       dispatch({ type: 'TICK', sec: secRef.current })
-      engineRef.current?.tick(Math.min(secRef.current, TOTAL_SEC - 1))
+      engineRef.current?.tick(Math.min(secRef.current, getTimeline().totalSec - 1))
     }, 1000 / speedRef.current)
     return () => clearInterval(timer)
   }, [session.state, session.paused, speed])
@@ -151,6 +155,14 @@ export function usePomodoro() {
     resume: () => {
       dispatch({ type: 'RESUME' })
       engineRef.current?.resume()
+    },
+
+    // 阶段时长设置（改动 11）：仅 idle 期可改；保存 = 生效 + 持久化
+    timeline: { cfg: getTimeline().cfg, version: tlVersion },
+    saveTimeline: (cfg) => {
+      setTimeline(cfg)
+      persistTimelineCfg(cfg)
+      setTlVersion(v => v + 1)
     },
 
     confirmSongs,

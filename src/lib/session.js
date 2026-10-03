@@ -1,14 +1,16 @@
 // 番茄会话状态机（纯逻辑，无 UI/音频依赖）。
 // 状态：idle → choosing → running ⇄ (中断仅记录 / 可暂停) → resting → running/choosing → report
-import { PHASES, TOTAL_SEC, phaseAt, minuteDone } from './timeline'
+// v2.3：时间轴参数化——每次 reducer 调用读当前时间轴实例（设置仅在 idle 期变更）
+import { getTimeline } from './timeline'
 
 export function initialState() {
+  const tl = getTimeline()
   return {
     state: 'idle',            // idle | choosing | running | resting | report
     songs: null,              // { fire, glideStart } 每日两首歌
     pomodoroIndex: 0,         // 今天第几颗（0 基）
     secElapsed: 0,            // 当前番茄已过秒数
-    phase: PHASES[0],
+    phase: tl.phases[0],
     minuteDone: 0,            // SegmentedBar 已点亮格数
     interrupts: [],           // [{ kind, at, dur }] 只记录，不干扰
     history: [],              // 已完成/作废番茄：{ result, index, duration, interrupts }
@@ -25,7 +27,7 @@ export function reducer(s, a) {
 
     case 'CONFIRM_SONGS':
       return { ...s, songs: a.songs, state: 'running', secElapsed: 0,
-               phase: PHASES[0], minuteDone: 0, interrupts: [], abandoned: false,
+               phase: getTimeline().phases[0], minuteDone: 0, interrupts: [], abandoned: false,
                paused: false, lastChooseDay: a.today ?? s.lastChooseDay }
 
     case 'START_POMODORO':    // 休息结束后：同日继承选歌直接开跑；跨日回选歌
@@ -33,17 +35,19 @@ export function reducer(s, a) {
       if (a.today !== knownDay) {
         return { ...s, state: 'choosing' }
       }
-      return { ...s, state: 'running', secElapsed: 0, phase: PHASES[0],
+      return { ...s, state: 'running', secElapsed: 0, phase: getTimeline().phases[0],
                minuteDone: 0, interrupts: [], abandoned: false, paused: false }
 
-    case 'TICK':
+    case 'TICK': {
       if (s.state !== 'running' || s.paused) return s
-      if (a.sec >= TOTAL_SEC) {
-        return { ...s, state: 'resting', secElapsed: TOTAL_SEC, minuteDone: 45,
+      const tl = getTimeline()
+      if (a.sec >= tl.totalSec) {
+        return { ...s, state: 'resting', secElapsed: tl.totalSec, minuteDone: tl.totalMin,
                  history: [...s.history, { result: 'done', index: s.pomodoroIndex,
-                   duration: TOTAL_SEC, interrupts: s.interrupts }] }
+                   duration: tl.totalSec, interrupts: s.interrupts }] }
       }
-      return { ...s, secElapsed: a.sec, phase: phaseAt(a.sec), minuteDone: minuteDone(a.sec) }
+      return { ...s, secElapsed: a.sec, phase: tl.phaseAt(a.sec), minuteDone: tl.minuteDone(a.sec) }
+    }
 
     case 'PAUSE':             // 暂停 ≠ 破戒：接电话/稍离的正当场景，番茄如实保留
       if (s.state !== 'running' || s.paused) return s
@@ -63,7 +67,8 @@ export function reducer(s, a) {
 
     case 'REST_END':
       return { ...s, state: 'running', pomodoroIndex: s.pomodoroIndex + 1,
-               secElapsed: 0, phase: PHASES[0], minuteDone: 0, interrupts: [], abandoned: false }
+               secElapsed: 0, phase: getTimeline().phases[0], minuteDone: 0,
+               interrupts: [], abandoned: false, paused: false }
 
     case 'FINISH_DAY':
       return { ...s, state: 'report' }

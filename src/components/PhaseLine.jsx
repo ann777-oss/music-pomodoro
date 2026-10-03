@@ -1,8 +1,9 @@
 // C3 PhaseLine 阶段状态行：统一状态机（idle/running/paused/needs-input/done），状态先行
-import { PHASES } from '../lib/timeline'
+import { getTimeline } from '../lib/timeline'
 
 export default function PhaseLine({ phaseKey, state = 'running' }) {
-  const phase = PHASES.find(p => p.key === phaseKey) || PHASES[0]
+  const phases = getTimeline().phases
+  const phase = phases.find(p => p.key === phaseKey) || phases[0]
   return (
     <div className="pl-line">
       <span className={`pl-stat ${state}`} aria-hidden="true"></span>
