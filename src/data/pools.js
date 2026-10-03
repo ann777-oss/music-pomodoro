@@ -39,6 +39,15 @@ export const FLOW_GROUPS = [
   { key: 'noise', label: '白噪音' },
 ]
 
+// 计时背景（改动 10）：默认黑白点阵 / 窗边黄昏 / 伴学书桌（AI 生成暖色真实感素材）。
+// 渲染规则见 FocusPage 背景层：图 + 纯色暗化遮罩（禁渐变）；有图时隐藏背景点场。
+export const BG_TYPES = {
+  none:   { label: '默认', desc: 'Nothing 黑白点阵',            file: null },
+  window: { label: '窗边', desc: '黄昏窗景 · 暖光台灯',          file: '/bg/window.jpg' },
+  buddy:  { label: '伴学', desc: '斜对桌的台灯下 · 有人陪你学',  file: '/bg/study-buddy.jpg' },
+}
+export const BG_DEFAULT = 'none'
+
 // 模拟红心池（选歌页候选；demo 阶段曲名仅作 UI 展示，音频仍走 POOLS）
 export const HEART_POOL = {
   fire: [

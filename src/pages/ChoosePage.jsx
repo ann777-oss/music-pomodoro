@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import DotClock from '../components/DotClock.jsx'
 import SongPicker from '../components/SongPicker.jsx'
 import { BtnPrimary, BtnGhost } from '../components/Buttons.jsx'
-import { HEART_POOL, FLOW_TYPES, FLOW_GROUPS, FLOW_DEFAULT } from '../data/pools'
+import { HEART_POOL, FLOW_TYPES, FLOW_GROUPS, FLOW_DEFAULT, BG_TYPES, BG_DEFAULT } from '../data/pools'
 import { CHOOSE_SEC } from '../lib/timeline'
 
 // P1 选歌页：90 秒限时选两首歌（每日首番茄；超时自动继承当前候选）。
@@ -14,6 +14,7 @@ export default function ChoosePage({ p }) {
   const [picked, setPicked] = useState({ ignite: null, glide: null })   // 歌单定向选中（覆盖轮换候选）
   const [picker, setPicker] = useState(null)                             // null | 'ignite' | 'glide'
   const [flowType, setFlowType] = useState(FLOW_DEFAULT)                // 心流声场类型
+  const [bgType, setBgType] = useState(BG_DEFAULT)                       // 计时背景（改动 10）
   const [previewing, setPreviewing] = useState(null)                    // 正在试听的类型 key
   const previewRef = useRef(null)                                       // 试听 Audio（与主引擎隔离）
   const confirmedRef = useRef(false)
@@ -67,6 +68,7 @@ export default function ChoosePage({ p }) {
       fireName: fireView.title,
       glideName: glideView.title,
       flowType,
+      bgType,
     })
   }
 
@@ -148,6 +150,23 @@ export default function ChoosePage({ p }) {
           </button>
         </div>
         <div className="ch-tag">{FLOW_TYPES[flowType].desc} · 默认钢琴，随时可换</div>
+      </div>
+
+      {/* IV 计时背景（改动 10）：默认 / 窗边 / 伴学 三选一 */}
+      <div className="ch-flowcard">
+        <div className="ch-slot"><span>Ⅳ SCENE</span><span>计时背景</span></div>
+        <div className="ch-flowrow">
+          <div className="ch-pills">
+            {Object.entries(BG_TYPES).map(([key, b]) => (
+              <button key={key}
+                className={`ch-pill${bgType === key ? ' on' : ''}`}
+                onClick={() => setBgType(key)}>
+                {b.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="ch-tag">{BG_TYPES[bgType].desc}</div>
       </div>
 
       <div className="ch-actions">

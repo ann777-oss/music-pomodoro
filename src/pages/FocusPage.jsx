@@ -7,16 +7,24 @@ import NowPlayingCard from '../components/NowPlayingCard.jsx'
 import Motto from '../components/Motto.jsx'
 import { BtnPrimary, BtnOutline } from '../components/Buttons.jsx'
 import { useLearners } from '../hooks/useLearners.js'
-import { FLOW_TYPES } from '../data/pools'
+import { FLOW_TYPES, BG_TYPES } from '../data/pools'
 import { remainText } from '../lib/timeline'
 
 // P2 番茄进行页：纯净无切歌入口；连点三下调出放弃面板（深藏应急入口）；
-// 底部 TOGETHER 在学人数（陪伴感，demo 模拟数据）
+// 底部 TOGETHER 在学人数（陪伴感，demo 模拟数据）；
+// 计时背景（改动 10）：图 + 纯色暗化遮罩，有图时隐藏背景点场
 export default function FocusPage({ p, onToggleTheme }) {
   const { session, track, speed } = p
   const learners = useLearners()
   const [panel, setPanel] = useState(false)
   const clicksRef = useRef([])
+  const bgFile = BG_TYPES[session.songs?.bgType]?.file || null
+
+  // 有背景图时隐藏全局点场（避免 difference 点叠在暖图上杂乱）
+  useEffect(() => {
+    document.body.classList.toggle('has-bg', !!bgFile)
+    return () => document.body.classList.remove('has-bg')
+  }, [bgFile])
 
   // 连点三下（800ms 内）调出放弃面板
   const onTap = () => {
@@ -36,6 +44,14 @@ export default function FocusPage({ p, onToggleTheme }) {
 
   return (
     <main className="pg-page" onClick={onTap}>
+      {/* 计时背景层（改动 10）：图 + 纯色暗化遮罩（禁渐变），随主题切换遮罩色 */}
+      {bgFile && (
+        <div className="fo-bgwrap" aria-hidden="true">
+          <img src={bgFile} alt="" />
+          <div className="fo-bgmask" />
+        </div>
+      )}
+
       <div className="pg-topbar">
         <span className="brand">MUSIC POMODORO</span>
         <span className="pg-right">
