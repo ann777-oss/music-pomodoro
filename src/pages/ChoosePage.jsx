@@ -17,8 +17,16 @@ export default function ChoosePage({ p }) {
   const [bgType, setBgType] = useState(BG_DEFAULT)                       // 计时背景（改动 10）
   const [previewing, setPreviewing] = useState(null)                    // 正在试听的类型 key
   const previewRef = useRef(null)                                       // 试听 Audio（与主引擎隔离）
+  const previewKeyRef = useRef(null)                                    // 试听中类型（同步读，免闭包态）
   const confirmedRef = useRef(false)
   const { chooseLeft } = p
+
+  // 背景实时预览（改动 12）：选中即切换试看，与番茄页同款渲染规则
+  const bgFile = BG_TYPES[bgType]?.file || null
+  useEffect(() => {
+    document.body.classList.toggle('has-bg', !!bgFile)
+    return () => document.body.classList.remove('has-bg')
+  }, [bgFile])
 
   // 当前生效的展示曲目：定向选中优先，否则轮换候选
   const fireView = picked.ignite
@@ -33,20 +41,25 @@ export default function ChoosePage({ p }) {
       previewRef.current.pause()
       previewRef.current = null
     }
+    previewKeyRef.current = null
     setPreviewing(null)
   }
 
-  // 15s 试听：与主引擎完全隔离（独立 Audio，音量 0.5，自动停）
-  const togglePreview = type => {
+  // 选中即试听（改动 12）：点 pill = 切换选中 + 自动播 15s；再点同 pill = 停止。
+  // 独立 Audio 通道（音量 0.5，与主引擎隔离），15s / 播完 / 切换 / 确认 / 卸载 自动停。
+  const pickFlow = key => {
+    const wasThis = previewKeyRef.current === key
     stopPreview()
-    if (type !== previewing) {
-      const a = new Audio(FLOW_TYPES[type].file)
+    setFlowType(key)
+    if (!wasThis) {
+      const a = new Audio(FLOW_TYPES[key].file)
       a.volume = 0.5
       a.onended = () => stopPreview()
       a.play().catch(() => {})                      // 浏览器拦截时静默
       previewRef.current = a
-      setPreviewing(type)
-      setTimeout(() => {                            // 最多 15s
+      previewKeyRef.current = key
+      setPreviewing(key)
+      setTimeout(() => {                           // 最多 15s
         if (previewRef.current === a) stopPreview()
       }, 15000)
     }
@@ -88,6 +101,14 @@ export default function ChoosePage({ p }) {
 
   return (
     <main className="pg-page">
+      {/* 背景实时预览层（改动 12）：与番茄页同款——图 cover + 纯色遮罩 */}
+      {bgFile && (
+        <div className="fo-bgwrap" aria-hidden="true">
+          <img src={bgFile} alt="" />
+          <div className="fo-bgmask" />
+        </div>
+      )}
+
       <div className="pg-topbar">
         <span className="brand">MUSIC POMODORO</span>
         <span>今日选歌</span>
@@ -125,7 +146,7 @@ export default function ChoosePage({ p }) {
         </div>
       </div>
 
-      {/* Ⅲ 心流声场（改动 7 + 9）：8 类型分两组（纯音乐/白噪音）+ 15s 试听 */}
+      {/* Ⅲ 心流声场（改动 7 + 9 + 12）：8 类型分两组；选中即试听 15s（♪ 标记正在播） */}
       <div className="ch-flowcard">
         <div className="ch-slot"><span>Ⅲ FLOW</span><span>心流 · 声场</span></div>
         {FLOW_GROUPS.map(g => (
@@ -135,21 +156,15 @@ export default function ChoosePage({ p }) {
               {Object.entries(FLOW_TYPES).filter(([, t]) => t.group === g.key)
                 .map(([key, t]) => (
                   <button key={key}
-                    className={`ch-pill${flowType === key ? ' on' : ''}`}
-                    onClick={() => { stopPreview(); setFlowType(key) }}>
+                    className={`ch-pill${flowType === key ? ' on' : ''}${previewing === key ? ' playing' : ''}`}
+                    onClick={() => pickFlow(key)}>
                     {t.label}
                   </button>
                 ))}
             </div>
           </div>
         ))}
-        <div className="ch-flowrow">
-          <button className={`ch-pill prev${previewing ? ' on' : ''}`}
-            onClick={() => togglePreview(flowType)}>
-            {previewing ? '■ 停止' : '▶ 试听'}
-          </button>
-        </div>
-        <div className="ch-tag">{FLOW_TYPES[flowType].desc} · 默认钢琴，随时可换</div>
+        <div className="ch-tag">{FLOW_TYPES[flowType].desc} · 选中即试听 15s，再点停止</div>
       </div>
 
       {/* IV 计时背景（改动 10）：默认 / 窗边 / 伴学 三选一 */}

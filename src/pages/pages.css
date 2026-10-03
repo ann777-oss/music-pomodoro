@@ -123,7 +123,10 @@
            transition: color .2s, border-color .2s, background .2s; }
 .ch-pill:hover { color: var(--display); border-color: var(--display); }
 .ch-pill.on { background: var(--display); color: var(--bg); border-color: var(--display); }
-.ch-pill.prev { border-style: dashed; }   /* 试听按钮：虚线边区分（非选择态） */
+.ch-pill.playing::after { content: ' ♪'; }                    /* 正在试听标记（改动 12） */
+.ch-pill.playing { animation: ch-prev-pulse 2s var(--ease) infinite; }
+@keyframes ch-prev-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+@media (prefers-reduced-motion: reduce) { .ch-pill.playing { animation: none; } }
 
 /* —— Choose 选歌页 —— */
 .ch-clockwrap { text-align: center; margin-top: var(--sp-40); }
