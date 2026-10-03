@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import DotClock from '../components/DotClock.jsx'
 import SegmentedBar from '../components/SegmentedBar.jsx'
 import PhaseLine from '../components/PhaseLine.jsx'
