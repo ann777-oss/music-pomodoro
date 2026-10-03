@@ -219,9 +219,77 @@ function libraryField(dur) {
   }))
 }
 
+// —— 风声：低通白噪 + 截止/幅度随慢 LFO 呼啸（阵风起伏）——
+function windField(dur) {
+  let lp = 0, hp = 0
+  let rng = 1122334
+  const rand = () => (rng = (rng * 16807) % 2147483647) / 2147483647
+  return edgeFade(synth(dur, t => {
+    const x = rand() * 2 - 1
+    const gust = 0.5 + 0.5 * sin(0.05, t + 1)                // 阵风包络（20s 周期）
+    const cutoff = 0.03 + 0.025 * (0.5 + 0.5 * sin(0.09, t)) // 截止漂移 = 呼啸
+    lp += cutoff * (x - lp)
+    hp += 0.006 * (x - hp)                                    // 极窄高频带
+    return (lp * 5.5 + hp * 8 * gust) * (0.45 + 0.55 * gust) * 0.6
+  }))
+}
+
+// —— 咖啡馆：棕噪底 + 人声嗡嗡频带（低频正弦群慢变）+ 偶发杯具叮当 ——
+function cafeField(dur) {
+  let brown = 0
+  let rng = 5566778
+  const rand = () => (rng = (rng * 16807) % 2147483647) / 2147483647
+  const clinks = []                                          // [时刻, 频率]
+  for (let t = 6; t < dur; t += 8 + rand() * 14) clinks.push([t, 2800 + rand() * 1600])
+  const voices = [174, 218, 262, 331]                        // 嗡嗡频带（人声 murmur 近似）
+  const vAmp = voices.map(() => 0.3 + rand() * 0.4)
+  return edgeFade(synth(dur, t => {
+    brown = (brown + 0.012 * (rand() * 2 - 1)) / 1.012
+    let v = brown * 1.8                                      // 底噪
+    for (let i = 0; i < voices.length; i++) {
+      const wob = 0.6 + 0.4 * sin(0.11 + i * 0.037, t)       // 每条慢变
+      v += sin(voices[i], t) * vAmp[i] * 0.045 * wob
+    }
+    for (const [t0, f] of clinks) {
+      const dt = t - t0
+      if (dt >= 0 && dt < 0.5) {
+        v += (sin(f, dt) + sin(f * 1.28, dt) * 0.6) * 0.07 * Math.exp(-dt * 9)
+      }
+    }
+    return v * 0.85
+  }))
+}
+
+// —— 夜晚虫鸣：极低底噪 + 蟋蟀规律 chirp 组（每 0.9s 一组、组内 4 脉冲）——
+function nightField(dur) {
+  let brown = 0
+  let rng = 3344556
+  const rand = () => (rng = (rng * 16807) % 2147483647) / 2147483647
+  const groupSec = 0.9
+  return edgeFade(synth(dur, t => {
+    brown = (brown + 0.008 * (rand() * 2 - 1)) / 1.008
+    let v = brown * 1.2                                      // 夜底噪（极低）
+    const tg = t % groupSec
+    const gi = Math.floor(t / groupSec)
+    if (gi % 3 !== 2) {                                      // 第三组静默（节奏感）
+      for (let p = 0; p < 4; p++) {                           // 组内 4 脉冲
+        const tp = tg - p * 0.062
+        if (tp >= 0 && tp < 0.028) {
+          const chirp = sin(4500, tp) * (1 + 0.3 * sin(28, tp))
+          v += chirp * 0.16 * Math.sin((tp / 0.028) * Math.PI)
+        }
+      }
+    }
+    return v * 0.8
+  }))
+}
+
 writeWav('flow-rain.wav', rainField(80))
 writeWav('flow-wave.wav', waveField(80))
 writeWav('flow-piano.wav', pianoField(80))
 writeWav('flow-lofi.wav', lofiField(80))
 writeWav('flow-library.wav', libraryField(80))
+writeWav('flow-wind.wav', windField(80))
+writeWav('flow-cafe.wav', cafeField(80))
+writeWav('flow-night.wav', nightField(80))
 console.log('done -> public/audio/')

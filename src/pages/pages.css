@@ -83,6 +83,9 @@
                border-radius: var(--r-md); padding: var(--sp-20);
                display: flex; flex-direction: column; gap: var(--sp-12); }
 .ch-flowrow { display: flex; align-items: center; gap: var(--sp-12); flex-wrap: wrap; }
+.ch-grouplabel { font-family: var(--f-mono); font-size: 10px; letter-spacing: .14em;
+                 color: var(--muted); text-transform: uppercase; flex: 0 0 auto;
+                 width: 52px; }   /* 组标签定宽对齐（纯音乐/白噪音两行） */
 .ch-pills { display: flex; gap: 8px; flex-wrap: wrap; }
 .ch-pill { font-family: var(--f-mono); font-size: 11px; letter-spacing: .08em;
            color: var(--secondary); background: none; border: 1px solid var(--line-2);

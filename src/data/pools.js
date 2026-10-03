@@ -18,16 +18,26 @@ export const POOLS = {
   },
 }
 
-// 心流声场类型（改动 7：选歌页可选/可试听）。
+// 心流声场类型（改动 7：选歌页可选/可试听；改动 9：白噪音类别扩展 + 分组）。
 // 音频由 gen-audio.mjs 合成（80s loop）；demo 元数据，接入 TME 音乐疗愈专区即真实内容。
+// group: 'music' 纯音乐组 / 'noise' 白噪音组（选歌页分两行展示）。
 export const FLOW_TYPES = {
-  rain:    { file: '/audio/flow-rain.wav',    label: '雨声',   desc: '白噪音 · 经典学习声场' },
-  wave:    { file: '/audio/flow-wave.wav',    label: '海浪',   desc: '白噪音 · 慢涌节律' },
-  piano:   { file: '/audio/flow-piano.wav',   label: '钢琴',   desc: '纯音乐 · C-Am-F-G 慢和弦' },
-  lofi:    { file: '/audio/flow-lofi.wav',    label: 'Lo-fi',  desc: '80 BPM · 黑胶炒豆' },
-  library: { file: '/audio/flow-library.wav', label: '图书馆', desc: '环境音 · 致敬民间智慧' },
+  piano:   { file: '/audio/flow-piano.wav',   label: '钢琴',   desc: '纯音乐 · C-Am-F-G 慢和弦', group: 'music' },
+  lofi:    { file: '/audio/flow-lofi.wav',    label: 'Lo-fi',  desc: '纯音乐 · 80 BPM 黑胶炒豆', group: 'music' },
+  rain:    { file: '/audio/flow-rain.wav',    label: '雨声',   desc: '白噪音 · 经典学习声场', group: 'noise' },
+  wave:    { file: '/audio/flow-wave.wav',    label: '海浪',   desc: '白噪音 · 慢涌节律', group: 'noise' },
+  library: { file: '/audio/flow-library.wav', label: '图书馆', desc: '白噪音 · 致敬民间智慧', group: 'noise' },
+  wind:    { file: '/audio/flow-wind.wav',    label: '风声',   desc: '白噪音 · 阵风呼啸起伏', group: 'noise' },
+  cafe:    { file: '/audio/flow-cafe.wav',    label: '咖啡馆', desc: '白噪音 · 人声嗡嗡+杯具叮当', group: 'noise' },
+  night:   { file: '/audio/flow-night.wav',   label: '夜晚虫鸣', desc: '白噪音 · 夏夜蟋蟀', group: 'noise' },
 }
 export const FLOW_DEFAULT = 'piano'
+
+// 分组渲染结构（改动 9）：纯音乐 / 白噪音 两行
+export const FLOW_GROUPS = [
+  { key: 'music', label: '纯音乐' },
+  { key: 'noise', label: '白噪音' },
+]
 
 // 模拟红心池（选歌页候选；demo 阶段曲名仅作 UI 展示，音频仍走 POOLS）
 export const HEART_POOL = {

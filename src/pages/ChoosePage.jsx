@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import DotClock from '../components/DotClock.jsx'
 import SongPicker from '../components/SongPicker.jsx'
 import { BtnPrimary, BtnGhost } from '../components/Buttons.jsx'
-import { HEART_POOL, FLOW_TYPES, FLOW_DEFAULT } from '../data/pools'
+import { HEART_POOL, FLOW_TYPES, FLOW_GROUPS, FLOW_DEFAULT } from '../data/pools'
 import { CHOOSE_SEC } from '../lib/timeline'
 
 // P1 选歌页：90 秒限时选两首歌（每日首番茄；超时自动继承当前候选）。
@@ -123,19 +123,25 @@ export default function ChoosePage({ p }) {
         </div>
       </div>
 
-      {/* Ⅲ 心流声场（改动 7）：5 类型 pill 一键切换 + 15s 试听 */}
+      {/* Ⅲ 心流声场（改动 7 + 9）：8 类型分两组（纯音乐/白噪音）+ 15s 试听 */}
       <div className="ch-flowcard">
         <div className="ch-slot"><span>Ⅲ FLOW</span><span>心流 · 声场</span></div>
-        <div className="ch-flowrow">
-          <div className="ch-pills">
-            {Object.entries(FLOW_TYPES).map(([key, t]) => (
-              <button key={key}
-                className={`ch-pill${flowType === key ? ' on' : ''}`}
-                onClick={() => { stopPreview(); setFlowType(key) }}>
-                {t.label}
-              </button>
-            ))}
+        {FLOW_GROUPS.map(g => (
+          <div key={g.key} className="ch-flowrow">
+            <span className="ch-grouplabel">{g.label}</span>
+            <div className="ch-pills">
+              {Object.entries(FLOW_TYPES).filter(([, t]) => t.group === g.key)
+                .map(([key, t]) => (
+                  <button key={key}
+                    className={`ch-pill${flowType === key ? ' on' : ''}`}
+                    onClick={() => { stopPreview(); setFlowType(key) }}>
+                    {t.label}
+                  </button>
+                ))}
+            </div>
           </div>
+        ))}
+        <div className="ch-flowrow">
           <button className={`ch-pill prev${previewing ? ' on' : ''}`}
             onClick={() => togglePreview(flowType)}>
             {previewing ? '■ 停止' : '▶ 试听'}
