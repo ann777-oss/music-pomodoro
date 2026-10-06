@@ -27,7 +27,7 @@ export default function RestPage({ p }) {
         <div className="pl-line">
           <span className="pl-stat idle" aria-hidden="true"></span>
           <b style={{ color: 'var(--primary)' }}>休息</b>
-          <span>音乐回到人间</span>
+          <span>我可以，且不止于此</span>
         </div>
 
         <div className="fo-stats" style={{ gap: 32 }}>

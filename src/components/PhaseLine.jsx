@@ -10,7 +10,7 @@ export default function PhaseLine({ phaseKey, state = 'running' }) {
     <div className="pl-line">
       <span className={`pl-stat ${state}`} aria-hidden="true"></span>
       <b>{phase.label}</b>
-      <span>{state === 'paused' ? '已暂停 · 音乐停走，随时回来'
+      <span>{state === 'paused' ? '已暂停 · 音乐已停，随时回来'
             : `${phase.tempo} · 第${ORDINAL[phase.key]}乐章`}</span>
     </div>
   )

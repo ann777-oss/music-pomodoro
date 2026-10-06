@@ -15,7 +15,7 @@ export function initialState() {
     interrupts: [],           // [{ kind, at, dur }] 只记录，不干扰
     history: [],              // 已完成/作废番茄：{ result, index, duration, interrupts }
     abandoned: false,         // 当前颗是否已作废
-    paused: false,            // 暂停中（改动 8）：时钟与音乐停走，不记中断，不计时长
+    paused: false,            // 暂停中（改动 8）：时钟与音乐已停，不记中断，不计时长
     lastChooseDay: null,      // 最后一次选歌日期（YYYY-MM-DD），用于每日首次判定
   }
 }

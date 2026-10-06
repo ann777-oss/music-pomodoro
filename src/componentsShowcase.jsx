@@ -55,7 +55,7 @@ export default function ComponentsShowcase() {
         <section className="cs-sec">
           <h3>C5 NowPlayingCard（旋转 / 静止）</h3>
           <NowPlayingCard title="大鱼 · 纯音乐版" sub="心流曲库 60–90 BPM · FADE 10S" spinning={true} />
-          <NowPlayingCard title="暂停演示" sub="RESTING · 音乐回到人间" status="IDLE" spinning={false} discSize={40} />
+          <NowPlayingCard title="暂停演示" sub="RESTING · 我可以，且不止于此" status="IDLE" spinning={false} discSize={40} />
         </section>
 
         <section className="cs-sec">
