@@ -1,6 +1,5 @@
-// C5 NowPlayingCard 播放卡：磨砂玻璃 + 真实唱片图（圆形抠图透明底，改动 15）+ inline 状态 + 点阵均衡器
+// C5 NowPlayingCard 播放卡：磨砂玻璃 + 真实唱片图（圆形抠图透明底，改动 15）+ inline 状态
 import DotDisc from './DotDisc.jsx'
-import DotEQ from './DotEQ.jsx'
 
 export const RECORD_IMG = '/vinyl/record.png'   // 圆形抠图透明底（public/vinyl/）
 
@@ -15,7 +14,6 @@ export default function NowPlayingCard({ title, sub, status = 'PLAYING', spinnin
           <span>{sub}</span>
         </div>
       </div>
-      <DotEQ />
     </section>
   )
 }
