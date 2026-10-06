@@ -85,9 +85,11 @@ body.has-bg [data-theme="light"] .np-card { background: rgba(255, 255, 255, .42)
 @keyframes dd-spin { to { transform: rotate(360deg); } }
 .dd-disc i { width: 100%; aspect-ratio: 1; border-radius: 50%; background: var(--display); }
 .dd-disc i.off { background: var(--line-2); }
-/* 真实唱片图片模式：圆形裁切 + 随 spin 旋转 */
+/* 真实唱片图片模式（改动 15 素材）：圆形抠图透明底 PNG；
+   opacity .95 微融入两种主题的玻璃卡，旋转随 spin */
 .dd-img { display: block; }
-.dd-img img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+.dd-img img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+              display: block; opacity: .95; }
 
 /* 点阵均衡器：3×3 圆点依次点亮 */
 .dq-eq { display: grid; grid-template-columns: repeat(3, 5px); gap: 4px; }
