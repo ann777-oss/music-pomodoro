@@ -76,7 +76,7 @@ export function usePomodoro() {
     return () => clearInterval(timer)
   }, [session.state, session.paused, speed])
 
-  // —— 番茄结束（进入 resting）：人间池 ——
+  // —— 番茄结束（进入 resting）：沿用心流声场（改动 17） ——
   useEffect(() => {
     if (session.state === 'resting' && engineRef.current) {
       engineRef.current.startRest()

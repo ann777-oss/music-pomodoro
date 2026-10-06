@@ -15,10 +15,6 @@ export const POOLS = {
     label: '心流池',
     tracks: ['/audio/flow-01.wav', '/audio/flow-02.wav', '/audio/flow-03.wav', '/audio/flow-04.wav'],
   },
-  human: {
-    label: '人间池',
-    tracks: ['/audio/human-01.wav', '/audio/human-02.wav'],
-  },
 }
 
 // 心流声场类型（改动 7：可选/可试听；改动 9：白噪音分组；改动 14：钢琴/Lo-fi 换真实音乐）。

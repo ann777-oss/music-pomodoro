@@ -142,16 +142,13 @@ export class AudioEngine {
     await this._play(cur)
   }
 
-  // 休息期：人间池随机 + 末 30 秒预埋下段点火前奏（简化：随机入池）
+  // 休息期（改动 17）：沿用心流声场——flow 池已在 startPomodoro 替换为用户选定单曲，
+  // 单元素池自然循环重播；放弃番茄后的休息同样生效。
   async startRest() {
     await this.ensureCtx()
     if (this.ctx.state === 'suspended') await this.ctx.resume()
-    const list = this.pools.human.tracks
-    const file = list[Math.floor(Math.random() * list.length)]
-    this.idx.human = list.indexOf(file)
-    this.phasePlaying = 'human'
     this.pendingPool = null
-    await this._play('human')
+    await this._play('flow')
   }
 
   // 中断联动：静音保持（模拟锁屏/切走音频暂停），恢复续播

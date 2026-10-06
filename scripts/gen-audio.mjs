@@ -1,5 +1,5 @@
 // 音乐番茄钟 · demo 合成音频生成脚本（node，零依赖）
-// 生成四类素材：fire 高能和弦 / glide 中板琶音 / flow 低频纯音 / human 明亮旋律
+// 生成三类素材：fire 高能和弦 / glide 中板琶音 / flow 低频纯音
 // 22050Hz 单声道 16bit PCM WAV。真实音乐素材（免版权 mp3）在 P5 前替换。
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
@@ -74,26 +74,6 @@ function flowTrack(dur) {
   })
 }
 
-// —— human：明亮旋律 + 节拍（"人间感"——休息期）——
-function humanTrack(dur, seed) {
-  const scale = [523.25, 587.33, 659.25, 783.99, 880.0]  // C5 D5 E5 G5 A5
-  let rng = seed
-  const rand = () => (rng = (rng * 16807) % 2147483647) / 2147483647
-  const noteDur = 0.32
-  const notes = []
-  for (let i = 0; i < dur / noteDur; i++) notes.push(scale[Math.floor(rand() * scale.length)])
-  return synth(dur, t => {
-    const idx = Math.floor(t / noteDur)
-    const tl = t - idx * noteDur
-    const f = notes[idx]
-    const env = Math.min(1, tl / 0.015) * Math.exp(-tl * 2.5)
-    const tri = Math.asin(sin(f, t)) * (2 / Math.PI)
-    let v = tri * 0.35 * env
-    if (tl < 0.08) v += (rand() * 2 - 1) * 0.12 * (1 - tl / 0.08)  // 短促"沙锤"
-    return v
-  })
-}
-
 // —— 素材清单（时长服务灵活边界听测）——
 mkdirSync(OUT, { recursive: true })
 writeWav('fire-01.wav', fireTrack(30))
@@ -105,8 +85,6 @@ writeWav('flow-01.wav', flowTrack(60))
 writeWav('flow-02.wav', flowTrack(60))
 writeWav('flow-03.wav', flowTrack(60))
 writeWav('flow-04.wav', flowTrack(60))
-writeWav('human-01.wav', humanTrack(40, 42))
-writeWav('human-02.wav', humanTrack(40, 7))
 
 // =——— 心流声场类型（改动 7：选歌页可选/可试听，80s loop 素材）———=
 // 首尾 1.5s 淡入淡出保证 loop 接缝平滑；噪声类为稳态天然无缝。
