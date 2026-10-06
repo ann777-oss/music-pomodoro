@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import DotClock from '../components/DotClock.jsx'
 import SongPicker from '../components/SongPicker.jsx'
 import { BtnPrimary, BtnGhost } from '../components/Buttons.jsx'
-import { HEART_POOL, FLOW_TYPES, FLOW_GROUPS, FLOW_DEFAULT, BG_TYPES, BG_DEFAULT } from '../data/pools'
+import { HEART_POOL, POOLS, FLOW_TYPES, FLOW_GROUPS, FLOW_DEFAULT, BG_TYPES, BG_DEFAULT } from '../data/pools'
 import { CHOOSE_SEC } from '../lib/timeline'
 
 // P1 选歌页：90 秒限时选两首歌（每日首番茄；超时自动继承当前候选）。
@@ -76,8 +76,8 @@ export default function ChoosePage({ p }) {
     confirmedRef.current = true
     stopPreview()
     p.confirmSongs({
-      fire: '/audio/fire-01.wav',
-      glideStart: '/audio/glide-01.wav',
+      fire: POOLS.fire.tracks[0],       // 引用池（改动 14）：换文件只改 pools.js，无散落硬编码
+      glideStart: POOLS.glide.tracks[0],
       fireName: fireView.title,
       glideName: glideView.title,
       flowType,

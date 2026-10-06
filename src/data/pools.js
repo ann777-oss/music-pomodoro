@@ -1,12 +1,15 @@
-// demo 预置音频池（合成素材，scripts/gen-audio.mjs 生成；P5 前替换真实免版权音乐）
+// demo 预置音频池。v2.4（改动 14）：点火/滑入/心流(钢琴·Lo-fi) 替换为真实音乐——
+// Kevin MacLeod (incompetech.com)，CC BY 4.0（署名许可，demo 内部使用；正式版接入 TME 授权曲库）。
+// 曲目：fire=Ready Aim Fire / glide=Wholesome·Bittersweet·Fireflies and Stardust /
+// flow-piano=Relaxing Piano Music / flow-lofi=Chill Wave。白噪音 6 类仍为合成（环境音合理）。
 export const POOLS = {
   fire: {
     label: '点火池',
-    tracks: ['/audio/fire-01.wav', '/audio/fire-02.wav'],
+    tracks: ['/audio/fire-01.mp3', '/audio/fire-02.wav'],
   },
   glide: {
     label: '滑入池',
-    tracks: ['/audio/glide-01.wav', '/audio/glide-02.wav', '/audio/glide-03.wav'],
+    tracks: ['/audio/glide-01.mp3', '/audio/glide-02.mp3', '/audio/glide-03.mp3'],
   },
   flow: {
     label: '心流池',
@@ -18,12 +21,12 @@ export const POOLS = {
   },
 }
 
-// 心流声场类型（改动 7：选歌页可选/可试听；改动 9：白噪音类别扩展 + 分组）。
-// 音频由 gen-audio.mjs 合成（80s loop）；demo 元数据，接入 TME 音乐疗愈专区即真实内容。
-// group: 'music' 纯音乐组 / 'noise' 白噪音组（选歌页分两行展示）。
+// 心流声场类型（改动 7：可选/可试听；改动 9：白噪音分组；改动 14：钢琴/Lo-fi 换真实音乐）。
+// 纯音乐组 = Kevin MacLeod 真实曲目；白噪音组 = gen-audio.mjs 合成（80s loop）。
+// demo 元数据，接入 TME 音乐疗愈专区即真实内容。group: 'music' / 'noise' 两行展示。
 export const FLOW_TYPES = {
-  piano:   { file: '/audio/flow-piano.wav',   label: '钢琴',   desc: '纯音乐 · C-Am-F-G 慢和弦', group: 'music' },
-  lofi:    { file: '/audio/flow-lofi.wav',    label: 'Lo-fi',  desc: '纯音乐 · 80 BPM 黑胶炒豆', group: 'music' },
+  piano:   { file: '/audio/flow-piano.mp3',   label: '钢琴',   desc: '纯音乐 · Relaxing Piano（Kevin MacLeod）', group: 'music' },
+  lofi:    { file: '/audio/flow-lofi.mp3',    label: 'Lo-fi',  desc: '纯音乐 · Chill Wave（Kevin MacLeod）', group: 'music' },
   rain:    { file: '/audio/flow-rain.wav',    label: '雨声',   desc: '白噪音 · 经典学习声场', group: 'noise' },
   wave:    { file: '/audio/flow-wave.wav',    label: '海浪',   desc: '白噪音 · 慢涌节律', group: 'noise' },
   library: { file: '/audio/flow-library.wav', label: '图书馆', desc: '白噪音 · 致敬民间智慧', group: 'noise' },
