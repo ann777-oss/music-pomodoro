@@ -1,0 +1,7 @@
+# Netlify 部署配置：导入仓库后自动识别，无需网页端手工填写
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
